@@ -14,13 +14,25 @@ public class RespBean<T> {
 
     private int code;
 
+    public RespBean(){
+
+    }
+
+    private RespBean(T data, String msg, int code){
+        this.data = data;
+        this.code = code;
+        this.msg = msg;
+    }
 
     public static <T> RespBean<T> ok(T data) {
-        RespBean<T> bean = new RespBean<>();
-        bean.setData(data);
-        bean.setCode(200);
-        return bean;
+        return new RespBean<T>(data, "", 1);
     }
+
+    public static <T> RespBean<T> fail(T data, String msg) {
+        return new RespBean<T>(data, msg, 0);
+    }
+
+
 
     public T getData() {
         return data;

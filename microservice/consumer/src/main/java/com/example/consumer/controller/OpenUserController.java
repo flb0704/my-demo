@@ -4,7 +4,10 @@ import com.example.consumer.iface.IUserRemote;
 import com.example.core.entity.RespBean;
 import com.example.core.entity.UserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -21,8 +24,14 @@ public class OpenUserController {
 
 
     @GetMapping("/open/userinfo")
-    public RespBean<UserInfo> info(String name){
+    public RespBean<UserInfo> info(String name) {
         return iUserRemote.getUserInfo(name);
     }
+
+    @PostMapping(value = "/open/check", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public RespBean<UserInfo> check(@RequestBody UserInfo info) {
+        return iUserRemote.check(info);
+    }
+
 
 }
