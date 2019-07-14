@@ -1,7 +1,7 @@
 package com.example.gateway.filter.factory;
 
 import com.example.core.utils.LogUtil;
-import com.sun.deploy.util.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
@@ -163,8 +163,6 @@ public class LogGatewayFilterFactory extends AbstractGatewayFilterFactory<Object
             if (null != method){
                 builder.append(", method: ").append(method.name());
             }
-
-
             // 记录头部信息
             builder.append(", header { ");
             for (Map.Entry<String, List<String>> entry : request.getHeaders().entrySet()) {
@@ -172,15 +170,18 @@ public class LogGatewayFilterFactory extends AbstractGatewayFilterFactory<Object
             }
 
             // 记录参数
-            builder.append("} param: ");
+            builder.append("} param {");
             if (null != method && HttpMethod.GET.matches(method.name())) {
                 // 记录请求的参数信息 针对GET 请求
                 MultiValueMap<String, String> queryParams = request.getQueryParams();
                 for (Map.Entry<String, List<String>> entry : queryParams.entrySet()) {
                     builder.append(entry.getKey()).append("=").append(StringUtils.join(entry.getValue(), ",")).append(",");
                 }
+                builder.append("}");
             }
             else {
+                builder.append(request.getURI().getQuery());
+                builder.append("} body: ");
                 // 从body中读取参数
                 builder.append(body);
             }

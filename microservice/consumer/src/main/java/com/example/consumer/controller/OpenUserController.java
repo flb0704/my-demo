@@ -1,8 +1,11 @@
 package com.example.consumer.controller;
 
 import com.example.consumer.iface.IUserRemote;
+import com.example.consumer.service.TraceThread;
 import com.example.core.entity.RespBean;
 import com.example.core.entity.UserInfo;
+import com.example.core.utils.LogUtil;
+import com.example.core.utils.ThreadPoolUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +24,14 @@ public class OpenUserController {
 
     @Autowired
     private IUserRemote iUserRemote;
+
+    @GetMapping("/open/traceId")
+    public void traceId(){
+        LogUtil.info("enter method traceId");
+        for (int i = 0; i < 2; i++) {
+            ThreadPoolUtil.EXECUTOR_SERVICE.submit(new TraceThread());
+        }
+    }
 
 
     @GetMapping("/open/userinfo")
