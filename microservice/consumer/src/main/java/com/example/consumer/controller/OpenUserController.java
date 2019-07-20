@@ -1,9 +1,9 @@
 package com.example.consumer.controller;
 
 import com.example.consumer.iface.IUserRemote;
-import com.example.consumer.service.TraceThread;
 import com.example.core.entity.RespBean;
 import com.example.core.entity.UserInfo;
+import com.example.core.thread.TraceThread;
 import com.example.core.utils.LogUtil;
 import com.example.core.utils.ThreadPoolUtil;
 import org.springframework.beans.factory.annotation.Autowired;

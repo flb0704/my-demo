@@ -5,12 +5,12 @@
     <parent>
         <groupId>com.example</groupId>
         <artifactId>microservice</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>0.0.1</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>service-center</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <name>service-center</name>
     <description>Demo project for Spring Boot</description>
     <packaging>jar</packaging>
