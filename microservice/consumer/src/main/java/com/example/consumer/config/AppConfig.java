@@ -1,5 +1,9 @@
 package com.example.consumer.config;
 
+import org.springframework.boot.autoconfigure.web.ResourceProperties;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
 /**
  * Description: it's purpose...
  *
@@ -7,4 +11,7 @@ package com.example.consumer.config;
  * @version 1.0
  */
 public class AppConfig {
+
+
+
 }
