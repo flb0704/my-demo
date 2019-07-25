@@ -2,9 +2,9 @@ package models
 
 // http统一的结果
 type HttpResult struct {
-	Msg    string      `json:"msg"`
-	Status int         `json:"status"`
-	Data   interface{} `json:"data"`
+	Msg    string      `json:"msg"`    // 信息
+	Status int         `json:"status"` // 响应状态
+	Data   interface{} `json:"data"`   // 响应数据
 }
 
 // 获取数据成功

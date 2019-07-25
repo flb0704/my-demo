@@ -27,3 +27,10 @@ yarn run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+
+
+## backend
+`go get -u github.com/gobuffalo/packr/v2/packr2`
+
+然后执行`packr`

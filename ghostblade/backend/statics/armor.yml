@@ -1,0 +1,9 @@
+armor:
+  - id: 0x11f1001
+    level: 99
+    name: 神域披风
+    defense: 700
+  - id: 0x11f1002
+    level: 99
+    name: 不败战甲
+    defense: 800

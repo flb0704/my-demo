@@ -1,0 +1,9 @@
+weapon:
+  - id: 0x11ff001
+    level: 99
+    name: 霜之哀伤
+    atk: 1500
+  - id: 0x11ff002
+    level: 99
+    name: 寒冰破魔枪
+    atk: 1600
