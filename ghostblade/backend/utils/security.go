@@ -95,15 +95,12 @@ func GenerateKeyFile(fileDir string) {
 
 // 从秘钥文件中读取密钥
 func ReadKeyFile(dir string) (pub *rsa.PublicKey, priv *rsa.PrivateKey)  {
-	// 如果目录不存在
-	if _, err := os.Stat(dir); os.IsNotExist(err) {
-		log.Fatal(err)
-	}
-	// 如果公钥和私钥文件都存在，则不进行创建
 	_, e := os.Stat(dir + PUB_SUFFIX)
 	_, e2 := os.Stat(dir + PRIV_SUFFIX)
+	// 有密钥缺失，则重新创建
 	if os.IsNotExist(e) || os.IsNotExist(e2) {
-		log.Fatal("Missing key file")
+		// 创建密钥
+		GenerateKeyFile(dir)
 	}
 
 	if bytes, e := ioutil.ReadFile(dir + PUB_SUFFIX); Handler(e,nil) {

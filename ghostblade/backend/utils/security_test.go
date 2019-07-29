@@ -2,7 +2,6 @@ package utils
 
 import (
 	"fmt"
-	"os"
 	"testing"
 )
 
@@ -30,14 +29,12 @@ func TestGenerateKeyFile(t *testing.T)  {
 }
 
 func TestEncryptAndDigitalSign(t *testing.T) {
-	s, _ := os.UserHomeDir()
 	var text = "HELLO WORLD"
-	encryptMsg, sign, _ := EncryptAndDigitalSign([]byte(text), s)
-
-	m, e := Decrypt(encryptMsg, sign, s)
+	encryptMsg, sign, _ := EncryptAndDigitalSign([]byte(text), Cfg.HomeDir)
+	m, e := Decrypt(encryptMsg, sign, Cfg.HomeDir)
 	if nil == e && string(m) == text {
 		fmt.Println("ok")
 	} else {
-		t.Error("failed")
+		t.Error("failed", e)
 	}
 }

@@ -4,9 +4,9 @@ package lib
 // 注意 /static/下面
 
 import (
+	"github.com/gobuffalo/packr/v2"
 	"github.com/linxd-cheer/my-demo/ghostblade/backend/models"
-	"github.com/linxd-cheer/my-demo/ghostblade/backend/utils"
-	"log"
+	"gopkg.in/yaml.v2"
 )
 
 const (
@@ -20,7 +20,21 @@ var (
 	// 设计的key可以保证绝对的不重复，所以可以把所有的都放进来
 	container = make(map[int32]models.Id, 16)
 	fileId = make(map[string]int8)
+
+	box = packr.New("MyBox", "../statics")
 )
+
+// 加载yaml文件中的内容，到结构体当中去
+// fileName: 文件名
+// i: 在此表示结构体的指针
+func Load(fileName string, i interface{}) error {
+	bytes, e := box.Find(fileName)
+	if e != nil {
+		return e
+	}
+	return yaml.Unmarshal(bytes, i)
+}
+
 
 // 当有新类型添加进来时需要改变的就是下面这3个
 type conf struct {
@@ -33,8 +47,8 @@ func init() {
 	initFile()
 	for file, id := range fileId {
 		var list = conf{}
-		if e := utils.Load(file, &list); e != nil {
-			log.Fatal("init weapon error ", e)
+		if e := Load(file, &list); e != nil {
+			//utils.LogFatal("init weapon error ", e)
 		}
 
 		for _, value := range getSlice(list, id) {
