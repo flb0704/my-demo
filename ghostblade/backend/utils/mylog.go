@@ -21,7 +21,7 @@ func init()  {
 }
 
 func create(filePath string) *os.File {
-	file, _ := os.OpenFile(filePath, os.O_CREATE|os.O_APPEND, 0666)
+	file, _ := os.OpenFile(filePath, os.O_CREATE|os.O_RDWR|os.O_APPEND, 0666)
 	return file
 }
 

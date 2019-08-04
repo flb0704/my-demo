@@ -30,6 +30,8 @@ func SaveDoc(fileName string, content interface{}) {
 	}
 }
 
+// fileName 要读取的文档名
+// valType，一般是结构体的指针
 func ReadDoc(fileName string, valType interface{}) {
 	fileName = Cfg.HomeDir + fileName
 	// 获取文件中的数据

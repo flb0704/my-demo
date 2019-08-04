@@ -14,12 +14,39 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"sync"
 )
 
 const (
 	PUB_SUFFIX  = "/.rsa_gb.pub"
 	PRIV_SUFFIX = "/.rsa_gb"
 )
+
+var pair = keyPair{}
+
+type keyPair struct {
+	mux      sync.Mutex
+	privByte []byte
+	pubByte  []byte
+	cnt      uint32 // 这个属性纯粹是test使用的，没有实际意义
+}
+
+// 对于写，进行加锁
+func (k *keyPair) load(priv []byte, pub []byte) {
+	k.mux.Lock()
+	defer k.mux.Unlock()
+	// 再次进行检查
+	if k.isEmpty() {
+		k.privByte = priv
+		k.pubByte = pub
+		k.cnt++
+	}
+}
+
+// 读不进行加锁，只会很短时间的状态不一致
+func (k *keyPair) isEmpty() bool {
+	return k.pubByte == nil || k.privByte == nil
+}
 
 func GenerateKeyPair(bits int) (*rsa.PublicKey, *rsa.PrivateKey) {
 	privateKey, e := rsa.GenerateKey(rand.Reader, bits)
@@ -94,21 +121,22 @@ func GenerateKeyFile(fileDir string) {
 }
 
 // 从秘钥文件中读取密钥
-func ReadKeyFile(dir string) (pub *rsa.PublicKey, priv *rsa.PrivateKey)  {
-	_, e := os.Stat(dir + PUB_SUFFIX)
-	_, e2 := os.Stat(dir + PRIV_SUFFIX)
-	// 有密钥缺失，则重新创建
-	if os.IsNotExist(e) || os.IsNotExist(e2) {
-		// 创建密钥
-		GenerateKeyFile(dir)
-	}
+func ReadKeyFile(dir string) (pub *rsa.PublicKey, priv *rsa.PrivateKey) {
+	if pair.isEmpty() {
+		_, e := os.Stat(dir + PUB_SUFFIX)
+		_, e2 := os.Stat(dir + PRIV_SUFFIX)
+		// 有密钥缺失，则重新创建
+		if os.IsNotExist(e) || os.IsNotExist(e2) {
+			// 创建密钥
+			GenerateKeyFile(dir)
+		}
 
-	if bytes, e := ioutil.ReadFile(dir + PUB_SUFFIX); Handler(e,nil) {
-		pub = BytesToPublicKey(bytes)
+		pu, _ := ioutil.ReadFile(dir + PUB_SUFFIX)
+		pr, _ := ioutil.ReadFile(dir + PRIV_SUFFIX)
+		pair.load(pr, pu)
 	}
-	if bytes, e := ioutil.ReadFile(dir + PRIV_SUFFIX); Handler(e,nil) {
-		priv = BytesToPrivateKey(bytes)
-	}
+	pub = BytesToPublicKey(pair.pubByte)
+	priv = BytesToPrivateKey(pair.privByte)
 	return
 }
 
@@ -117,7 +145,7 @@ func BytesToPrivateKey(bits []byte) *rsa.PrivateKey {
 	block, _ := pem.Decode(bits)
 
 	key, e := x509.ParsePKCS1PrivateKey(block.Bytes)
-	if Handler(e,nil) {
+	if Handler(e, nil) {
 		return key
 	}
 	return nil
@@ -128,8 +156,8 @@ func BytesToPublicKey(bits []byte) *rsa.PublicKey {
 	block, _ := pem.Decode(bits)
 
 	pub, err := x509.ParsePKIXPublicKey(block.Bytes)
-	if Handler(err,nil) {
-		if key,ok := pub.(*rsa.PublicKey); ok {
+	if Handler(err, nil) {
+		if key, ok := pub.(*rsa.PublicKey); ok {
 			return key
 		}
 	}
@@ -140,7 +168,7 @@ func BytesToPublicKey(bits []byte) *rsa.PublicKey {
 func EncryptWithPubKey(msg []byte, pub *rsa.PublicKey) []byte {
 	hash := sha1.New()
 	bytes, e := rsa.EncryptOAEP(hash, rand.Reader, pub, msg, nil)
-	if Handler(e,nil) {
+	if Handler(e, nil) {
 		return bytes
 	}
 	return nil
@@ -150,7 +178,7 @@ func EncryptWithPubKey(msg []byte, pub *rsa.PublicKey) []byte {
 func DecryptWithPrivKey(encry []byte, priv *rsa.PrivateKey) []byte {
 	hash := sha1.New()
 	bytes, e := rsa.DecryptOAEP(hash, rand.Reader, priv, encry, nil)
-	if Handler(e,nil) {
+	if Handler(e, nil) {
 		return bytes
 	}
 	return nil
@@ -200,4 +228,3 @@ func Decrypt(msg []byte, sign []byte, keyDir string) (m []byte, e error) {
 	m = DecryptWithPrivKey(msg, priv)
 	return
 }
-

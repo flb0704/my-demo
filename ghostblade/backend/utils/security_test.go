@@ -3,6 +3,7 @@ package utils
 import (
 	"fmt"
 	"testing"
+	"time"
 )
 
 func TestPublicKeyToBits(t *testing.T) {
@@ -37,4 +38,12 @@ func TestEncryptAndDigitalSign(t *testing.T) {
 	} else {
 		t.Error("failed", e)
 	}
+}
+
+func TestReadKeyFile(t *testing.T) {
+	for i:=0; i< 100 ; i++  {
+		go ReadKeyFile(Cfg.HomeDir)
+	}
+	time.Sleep(2 * time.Second)
+	fmt.Println(pair.cnt)
 }
